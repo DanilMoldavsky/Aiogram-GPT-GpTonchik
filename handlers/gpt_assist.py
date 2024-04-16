@@ -13,6 +13,12 @@ router = Router()
 gpt = Gpt(proxy=conf.ADDRESS_PROXY)
 
 
+def escape_markdown_v2(text:str) -> str:
+    escape_chars = '_[]()~>#+-=|{}.!' # `*
+    server_valid = ''.join("\\" + char if char in escape_chars else char for char in text)
+    return server_valid.replace('**', '*')
+
+
 @router.message(F.text)
 async def cmd_cancel_no_state(message: Message):
     await message.answer(
@@ -20,7 +26,9 @@ async def cmd_cancel_no_state(message: Message):
         reply_markup=ReplyKeyboardRemove()
     )
     ai_response = gpt.talk_valid_markdown(prompts=message.text)
+    ai_valid = escape_markdown_v2(ai_response)
     await message.answer(
-        text=ai_response,
-        reply_markup=ReplyKeyboardRemove()
+        text=ai_valid,
+        reply_markup=ReplyKeyboardRemove(),
+        parse_mode='MarkdownV2'
     )

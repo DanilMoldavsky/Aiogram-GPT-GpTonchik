@@ -51,7 +51,10 @@ class Gpt:
             print(self.output_talk)
             
     def talk_valid_markdown(self, prompts:str='Привет, ты работаешь?', system_prompt:str='', mess:list=[]) -> str:
-            messages = [{"content": prompts, "role": "user"}] # , {"content": system_prompt, "role": "system"}
+            # 'Отвечай, пожалуйста, со способом форматирования текста в html' +
+            supp_prompts = 'Я пишу тебе из телеграм, для ответа используй MarkdownV2, чтобы не нарушать правила telegram.'
+            messages = [{
+                "content": prompts, "role": "user"}] # , {"content": system_prompt, "role": "system"}
             
             # messages = [
             #     {"role": "assistant", "content": system_prompt},
@@ -67,7 +70,7 @@ class Gpt:
             
             # self.output_talk = response.replace('**', '*')
             
-            return response.replace('**', '*')
+            return response #.replace('**', '*').replace('!', '\!').replace('.', '\.')
             
     # def talk(self):
     #         with open('response.json', 'r', encoding="utf-8") as file:

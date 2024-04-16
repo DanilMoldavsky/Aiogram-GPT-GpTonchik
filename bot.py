@@ -19,7 +19,7 @@ async def main():
         
     )
 
-    default = DefaultBotProperties(parse_mode="HTML")
+    default = DefaultBotProperties(parse_mode="MarkdownV2")
     bot = Bot(token=conf.TOKEN, default=default)
     dp = Dispatcher(storage=MemoryStorage())
     
