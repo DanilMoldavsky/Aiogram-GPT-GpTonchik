@@ -2,6 +2,7 @@ import asyncio
 import json
 import time
 import g4f
+import aiofiles
 
 
 
@@ -21,35 +22,8 @@ class Gpt:
         self.output = []
         self.output_talk = ''
         self.proxy = proxy
-    
-    def talk_valid(self):
-            messages = [{"role": "user", "content": self.prompts}]
-            response = g4f.ChatCompletion.create(
-                model=g4f.models.gpt_4,
-                provider=g4f.Provider.Bing,
-                messages=messages,
-                proxy=self.proxy
-            )
-            
-            valid_simbol = ["а","б","в","г","д","е","ё","ж","з","и","й","к","л","м","н","о",
-            "п","р","с","т","у","ф","х","ц","ч","ш","щ","ъ","ы","ь","э","ю","я", ",", " ", "-", "." ]
-            
-            valid_response = ''.join([c for c in response if c.lower() in valid_simbol])
-            self.output_talk = valid_response
-            print(self.output_talk)
-            
-    def talk(self):
-            messages = [{"role": "user", "content": self.prompts}]
-            response = g4f.ChatCompletion.create(
-                model=g4f.models.gpt_4,
-                provider=g4f.Provider.Bing,
-                messages=messages,
-                proxy=self.proxy
-            )
 
-            self.output_talk = response
-            print(self.output_talk)
-            
+
     def talk_valid_markdown(self, prompts:str='Привет, ты работаешь?', system_prompt:str='', mess:list=[]) -> str:
             # 'Отвечай, пожалуйста, со способом форматирования текста в html' +
             supp_prompts = 'Я пишу тебе из телеграм, для ответа используй MarkdownV2, чтобы не нарушать правила telegram.'
@@ -72,36 +46,18 @@ class Gpt:
             
             return response #.replace('**', '*').replace('!', '\!').replace('.', '\.')
             
-    # def talk(self):
-    #         with open('response.json', 'r', encoding="utf-8") as file:
-    #             data = json.load(file)
-    #         data["content"] *= 6
-    #         message = ''.join([c for c in data["content"][:4701]])
-    #         print(len(message)) 
-    #         # messages = [{"role": "user", "content": data["content"]}]
-    #         messages = [{"role": "user", "content": message}]
-    #         response = g4f.ChatCompletion.create(
-    #             model=g4f.models.gpt_4,
-    #             provider=g4f.Provider.Bing,
-    #             messages=messages,
-    #             proxy=self.proxy
-    #         )
-            
-    #         valid_simbol = ["а","б","в","г","д","е","ё","ж","з","и","й","к","л","м","н","о",
-    #         "п","р","с","т","у","ф","х","ц","ч","ш","щ","ъ","ы","ь","э","ю","я", ",", " ", "-", "." ]
-            
-    #         valid_response = ''.join([c for c in response if c.lower() in valid_simbol])
-    #         valid_response *= 13
-    #         self.output_talk = valid_response
-    #         data = {"role": "assistant", "content": self.output_talk, "lenght": len(self.output_talk)}
-    #         # data["content"] = data["content"].encode("utf-8").decode("unicode_escape")
-    #         file_name = 'response.json'
-            
-    #         # with open(file_name, 'w', encoding="utf-8") as json_file:
-    #         #     json.dump(data, json_file, indent=4, ensure_ascii=False)
-                
-    #         print(f"Объект JSON успешно записан в файл {file_name}")
-    #         print(self.output_talk)
+    def take_context(self, id:str='722895694') -> list:
+            with open('db/context.json', 'r', encoding='utf-8') as f:
+                context = json.load(f)
+                messages = context[id]
+                print(messages)
+                return messages
 
-# gpt = GptRewriter(['Привет, ты работаешь?', 'Объясни, 1 градус, больше чем 2', 'Какой цвет похож на синий?', 'Ты работаешь?', ' Ты тут есть?', 'Ты настоящий?'])
 
+async def main():
+    gpt = Gpt(prompts='Привет, ты работаешь?')
+    gpt.take_context('722895694')
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
