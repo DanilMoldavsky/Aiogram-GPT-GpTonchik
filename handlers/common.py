@@ -71,7 +71,7 @@ async def cmd_cancel(message: Message, state: FSMContext):
 #         reply_markup=InlineKeyboardMarkup(inline_keyboard=kb)
 #     )
     
-@router.message(Command(commands=["start"]))
+@router.message(Command(commands=["db"]))
 async def cmd_start(message: Message, state: FSMContext, response: dict):
     await state.clear()
     

@@ -7,10 +7,10 @@ from aiogram.types import \
     Message, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 
 from gpt.gpt import Gpt
-import conf
+from config_reader import config
 
 router = Router()
-gpt = Gpt(proxy=conf.ADDRESS_PROXY)
+gpt = Gpt(proxy='socks5://wpujiJaH:2nJAhLMm@139.28.233.75:64993')
 
 
 def escape_markdown_v2(text:str) -> str:
@@ -25,10 +25,10 @@ async def cmd_cancel_no_state(message: Message):
         text='Сейчас подумаю и отвечу',
         reply_markup=ReplyKeyboardRemove()
     )
-    ai_response = gpt.talk_valid_markdown(prompts=message.text)
+    ai_response = await gpt.talk_valid_async(prompts=message.text)
     ai_valid = escape_markdown_v2(ai_response)
     await message.answer(
         text=ai_valid,
         reply_markup=ReplyKeyboardRemove(),
-        parse_mode='MarkdownV2'
+        # parse_mode='MarkdownV2'
     )

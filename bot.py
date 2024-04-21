@@ -6,7 +6,8 @@ from aiogram.client.bot import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 
 # from config_reader import config
-import conf
+# import conf
+from config_reader import config
 from handlers import \
     common, gpt_assist
 from middlewares.db import create_pool
@@ -16,7 +17,7 @@ from middlewares import \
 # Запуск бота
 async def main():
     default = DefaultBotProperties(parse_mode="MarkdownV2")
-    bot = Bot(token=conf.TOKEN, default=default)
+    bot = Bot(token=config.token.get_secret_value(), default=default)
     dp = Dispatcher(storage=MemoryStorage())
     
     # checkin.router.message.middleware(WeekendCallbackMiddleware())
@@ -33,7 +34,7 @@ async def main():
     
     # dp.include_router(common.router)
     dp.include_routers(
-        common.router, #gpt_assist.router
+        common.router, gpt_assist.router
         )
     
     
