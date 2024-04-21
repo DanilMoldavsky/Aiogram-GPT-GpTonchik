@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     token: SecretStr
     main_chat_id: SecretStr
     G4F_PROXY: SecretStr
+    postgres: SecretStr
 
     # Начиная со второй версии pydantic, настройки класса настроек задаются
     # через model_config

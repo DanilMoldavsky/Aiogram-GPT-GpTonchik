@@ -6,6 +6,7 @@ from typing import Callable, Dict, Any, Awaitable
 from aiogram.types import TelegramObject, Message
 
 from utilities import Utilities
+from config_reader import config
 
 import conf
 import asyncio
@@ -67,7 +68,7 @@ class DbMiddleware(BaseMiddleware):
 
 
 async def create_pool():
-    return await asyncpg.create_pool(dsn=conf.POSTGRES)
+    return await asyncpg.create_pool(dsn=config.postgres.get_secret_value())
 
 
 if __name__ == '__main__':
