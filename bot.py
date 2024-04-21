@@ -9,16 +9,12 @@ from aiogram.fsm.storage.memory import MemoryStorage
 import conf
 from handlers import \
     common, gpt_assist
-# from middlewares import \
-#     UserInternalIdMiddleware, WeekendCallbackMiddleware, ChatActionMiddleware
+from middlewares.db import create_pool
+from middlewares import \
+    DbMiddleware
 
 # Запуск бота
 async def main():
-    logging.basicConfig(
-        level=logging.INFO,
-        
-    )
-
     default = DefaultBotProperties(parse_mode="MarkdownV2")
     bot = Bot(token=conf.TOKEN, default=default)
     dp = Dispatcher(storage=MemoryStorage())
@@ -30,9 +26,14 @@ async def main():
     # dp.callback_query.outer_middleware(WeekendCallbackMiddleware())
     # write_mail.router.message.outer_middleware(ChatActionMiddleware())
     
+    #! Настройка middleware
+    # loop = asyncio.get_event_loop()
+    db_pool = await create_pool()
+    dp.update.middleware.register(DbMiddleware(db_pool))
+    
     # dp.include_router(common.router)
     dp.include_routers(
-        common.router, gpt_assist.router
+        common.router, #gpt_assist.router
         )
     
     
@@ -42,6 +43,7 @@ async def main():
     # Да, этот метод можно вызвать даже если у вас поллинг
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot) # allowed_updates=["message", "inline_query", "chat_member"] , admins=admin_ids
+    
 
 
 if __name__ == "__main__":

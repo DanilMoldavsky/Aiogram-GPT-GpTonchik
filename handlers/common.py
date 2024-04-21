@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.types import \
     Message, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
-
+from typing import Dict, Any
 # from states import DeleteCommon, SaveCommon
 
 router = Router()
@@ -72,10 +72,12 @@ async def cmd_cancel(message: Message, state: FSMContext):
 #     )
     
 @router.message(Command(commands=["start"]))
-async def cmd_start(message: Message, state: FSMContext):
+async def cmd_start(message: Message, state: FSMContext, response: dict):
     await state.clear()
+    
     await message.answer(
-        text="Выберите, что хотите заказать: "
-             "блюда (/food) или напитки (/drinks).",
+        # text=f"{pgCount} стран в базе данных по usa"
+        #      "блюда (/food) или напитки (/drinks).",
+        text=f"{response}",
         reply_markup=ReplyKeyboardRemove()
     )
