@@ -14,10 +14,12 @@ from middlewares.db import create_pool
 from middlewares import \
     DbMiddleware
 
+default = DefaultBotProperties(parse_mode="MarkdownV2")
+bot = Bot(token=config.token.get_secret_value(), default=default)
+
 # Запуск бота
 async def main():
-    default = DefaultBotProperties(parse_mode="MarkdownV2")
-    bot = Bot(token=config.token.get_secret_value(), default=default)
+
     dp = Dispatcher(storage=MemoryStorage())
     
     # checkin.router.message.middleware(WeekendCallbackMiddleware())
@@ -29,8 +31,8 @@ async def main():
     
     #! Настройка middleware
     # loop = asyncio.get_event_loop()
-    db_pool = await create_pool()
-    dp.update.middleware.register(DbMiddleware(db_pool))
+    # db_pool = await create_pool()
+    # dp.update.middleware.register(DbMiddleware(db_pool))
     
     # dp.include_router(common.router)
     dp.include_routers(

@@ -3,11 +3,15 @@ from aiogram.filters import Command, CommandStart
 from aiogram.filters.state import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
+from aiogram import types
 from aiogram.types import \
     Message, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 
+from bot import bot
 from gpt.gpt import Gpt
 from config_reader import config
+from storage import set_text, mess_edit_set
+from states import ChatGpt
 
 router = Router()
 gpt = Gpt(proxy='socks5://wpujiJaH:2nJAhLMm@139.28.233.75:64993')
@@ -32,3 +36,44 @@ async def cmd_cancel_no_state(message: Message):
         reply_markup=ReplyKeyboardRemove(),
         # parse_mode='MarkdownV2'
     )
+
+@router.callback_query(StateFilter(None), F.data == "gpt_dialog")
+async def set_state_gpt(callback: types.CallbackQuery, state: FSMContext):
+    await state.set_state(ChatGpt.waiting_for_text_chat)
+    
+    await callback.message.answer(text='Просто отправь сообщение с текстом и Ai ассистент ответит тебе!')
+
+@router.callback_query(ChatGpt.waiting_for_text_chat, F.text)
+async def start_gpt_dialog(
+    callback: types.CallbackQuery, 
+    state: FSMContext, 
+    message: Message, 
+    autocomplete:bool=True
+    ):
+    await state.update_data(prompt=message.text)
+    await state.set_state(ChatGpt.wait_gpt_response)
+
+    # ai_valid = escape_markdown_v2(ai_response)
+    msg_edit_id = await callback.message.answer(
+        text='Здесь появится ответ',
+        # reply_markup=ReplyKeyboardRemove(),
+        # parse_mode='MarkdownV2'
+    )
+    mess_edit_set(id_user=callback.from_user.id, mess_edit_set=msg_edit_id.message_id)
+    
+    ai_response = await gpt.talk_valid_async(prompts=message.text)
+    construct_resp = ""
+    async for response in ai_response:
+        construct_resp += response
+        await bot.edit_message_text(
+            chat_id=callback.from_user.id,
+            message_id=msg_edit_id.message_id,
+            text=escape_markdown_v2(construct_resp),
+        )
+    if autocomplete:
+        await state.set_state(state=ChatGpt.waiting_for_text_chat)
+        await state.set_data({})
+    else:
+        await state.clear()
+        await state.set_data({})
+    

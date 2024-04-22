@@ -6,12 +6,20 @@ from aiogram.fsm.state import default_state
 from aiogram.types import \
     Message, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 from typing import Dict, Any
+
+from kb.gptkb import gpt_keyboard
 # from states import DeleteCommon, SaveCommon
 
 router = Router()
 
 
-
+@router.message(Command(commands=["start", "gpt"]))
+async def cmd_start(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer(
+        text="Привет!\nЕсли вы хотите пообщаться с ChatGpt4, нажмите на кнопку ниже\nСкоро появятся новые функции!",
+        reply_markup=gpt_keyboard()
+    )
 
 # Нетрудно догадаться, что следующие два хэндлера можно 
 # спокойно объединить в один, но для полноты картины оставим так
