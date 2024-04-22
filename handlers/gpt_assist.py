@@ -23,19 +23,19 @@ def escape_markdown_v2(text:str) -> str:
     return server_valid.replace('**', '*')
 
 
-@router.message(F.text)
-async def cmd_cancel_no_state(message: Message):
-    await message.answer(
-        text='Сейчас подумаю и отвечу',
-        reply_markup=ReplyKeyboardRemove()
-    )
-    ai_response = await gpt.talk_valid_async(prompts=message.text)
-    ai_valid = escape_markdown_v2(ai_response)
-    await message.answer(
-        text=ai_valid,
-        reply_markup=ReplyKeyboardRemove(),
-        # parse_mode='MarkdownV2'
-    )
+# @router.message(F.text)
+# async def cmd_cancel_no_state(message: Message):
+#     await message.answer(
+#         text='Сейчас подумаю и отвечу',
+#         reply_markup=ReplyKeyboardRemove()
+#     )
+#     ai_response = await gpt.talk_valid_async(prompts=message.text)
+#     ai_valid = escape_markdown_v2(ai_response)
+#     await message.answer(
+#         text=ai_valid,
+#         reply_markup=ReplyKeyboardRemove(),
+#         # parse_mode='MarkdownV2'
+#     )
 
 @router.callback_query(StateFilter(None), F.data == "gpt_dialog")
 async def set_state_gpt(callback: types.CallbackQuery, state: FSMContext):
