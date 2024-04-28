@@ -65,11 +65,9 @@ async def start_gpt_dialog(
     construct_resp = ""
     async for response in ai_response:
         construct_resp += response
-        await bot.edit_message_text(
-            chat_id=callback.from_user.id,
-            message_id=msg_edit_id.message_id,
-            text=escape_markdown_v2(construct_resp),
-        )
+    await callback.message.answer(
+        text=escape_markdown_v2(construct_resp),
+    )
     if autocomplete:
         await state.set_state(state=ChatGpt.waiting_for_text_chat)
         await state.set_data({})

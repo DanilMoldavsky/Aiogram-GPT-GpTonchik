@@ -56,12 +56,12 @@ class Gpt:
             #     {"role": "assistant", "content": system_prompt},
             #     {"role": "user", "content": prompts},
             # ]
-            request = g4f.ChatCompletion.create(
+            request = g4f.ChatCompletion.create_async(
                 model=g4f.models.gpt_4,
                 provider=g4f.Provider.Bing,
                 messages=messages,
                 stream=True,
-                proxy=self.proxy
+                # proxy=self.proxy
             )
 
             return request
