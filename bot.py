@@ -14,7 +14,7 @@ from middlewares.db import create_pool
 from middlewares import \
     DbMiddleware
 
-default = DefaultBotProperties()#parse_mode="MarkdownV2"
+default = DefaultBotProperties(parse_mode="MarkdownV2")
 bot = Bot(token=config.token.get_secret_value(), default=default)
 
 # Запуск бота
