@@ -7,7 +7,7 @@ from aiogram import types
 from aiogram.types import \
     Message, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 #! Обрати внимание, форматинг для маркдауна и html
-from aiogram.utils import escape_markdown
+# from aiogram.utils import escape_markdown
 
 from bot import bot
 from gpt.gpt import Gpt
